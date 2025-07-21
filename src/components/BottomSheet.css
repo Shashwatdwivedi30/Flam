@@ -1,0 +1,1167 @@
+/* Screen reader only content */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Focus indicators for accessibility */
+.bottom-sheet-handle:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+  border-radius: 8px;
+}
+
+.control-btn:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+  box-shadow: 
+    0 0 0 4px rgba(59, 130, 246, 0.2),
+    0 6px 20px rgba(59, 130, 246, 0.25),
+    0 2px 8px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+.snap-point-btn:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+  box-shadow: 
+    0 0 0 4px rgba(59, 130, 246, 0.2),
+    0 8px 25px rgba(59, 130, 246, 0.2),
+    0 4px 12px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .bottom-sheet {
+    border: 2px solid #000000;
+  }
+  
+  .bottom-sheet-handle {
+    border-bottom: 2px solid #000000;
+  }
+  
+  .handle-bar {
+    background: #000000;
+    height: 6px;
+  }
+  
+  .control-btn {
+    border: 2px solid #000000;
+  }
+  
+  .snap-point-btn {
+    border: 2px solid #000000;
+  }
+  
+  .snap-point-btn.active {
+    background: #000000;
+    color: #ffffff;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .bottom-sheet {
+    animation: none;
+    transition: none;
+  }
+  
+  .bottom-sheet.dragging {
+    transition: none;
+  }
+  
+  .bottom-sheet.animating {
+    animation: none;
+  }
+  
+  .bottom-sheet.animating .bottom-sheet-handle {
+    animation: none;
+  }
+  
+  .control-btn,
+  .snap-point-btn,
+  .closed-indicator {
+    transition: none;
+  }
+  
+  .control-btn:hover:not(:disabled),
+  .snap-point-btn:hover:not(:disabled),
+  .closed-indicator:hover {
+    transform: none;
+  }
+  
+  .control-btn::before,
+  .snap-point-btn::before {
+    transition: none;
+  }
+}
+
+/* Bottom Sheet Overlay */
+.bottom-sheet-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.4) 100%);
+  z-index: 1000;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  backdrop-filter: blur(8px);
+  animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Bottom Sheet Container */
+.bottom-sheet {
+  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+  border-radius: 24px 24px 0 0;
+  width: 100%;
+  max-width: 600px;
+  max-height: 95vh;
+  position: relative;
+  box-shadow: 
+    0 -20px 60px rgba(0, 0, 0, 0.15),
+    0 -8px 32px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  overflow: hidden;
+  animation: slideUp 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  /* Smooth transitions for non-animating properties */
+  transition: box-shadow 0.3s ease, border-radius 0.3s ease, transform 0.3s ease;
+}
+
+.bottom-sheet.dragging {
+  transition: none;
+  /* Enhanced shadow during drag */
+  box-shadow: 
+    0 -25px 80px rgba(0, 0, 0, 0.25),
+    0 -12px 40px rgba(0, 0, 0, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  /* Add subtle scale effect during drag */
+  transform: scale(1.02);
+}
+
+.bottom-sheet.animating {
+  /* Disable transitions during spring animation */
+  transition: none;
+  /* Add subtle glow effect during animation */
+  box-shadow: 
+    0 -20px 60px rgba(59, 130, 246, 0.15),
+    0 -8px 32px rgba(59, 130, 246, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+/* Snap Point Specific Styles */
+.bottom-sheet.closed {
+  border-radius: 24px 24px 0 0;
+  box-shadow: 
+    0 -8px 32px rgba(0, 0, 0, 0.12),
+    0 -4px 16px rgba(0, 0, 0, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+
+.bottom-sheet.half-open {
+  border-radius: 24px 24px 0 0;
+}
+
+.bottom-sheet.fully-open {
+  border-radius: 24px 24px 0 0;
+  max-height: 98vh;
+}
+
+/* Drag Handle */
+.bottom-sheet-handle {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 16px 0;
+  cursor: grab;
+  user-select: none;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 1) 100%);
+  border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+  min-height: 72px;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.bottom-sheet-handle::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, rgba(226, 232, 240, 1) 50%, transparent 100%);
+}
+
+.bottom-sheet-handle:active {
+  cursor: grabbing;
+  background: linear-gradient(180deg, rgba(248, 250, 252, 0.95) 0%, rgba(241, 245, 249, 1) 100%);
+}
+
+.handle-bar {
+  width: 48px;
+  height: 5px;
+  background: linear-gradient(90deg, #e2e8f0 0%, #cbd5e1 50%, #e2e8f0 100%);
+  border-radius: 3px;
+  transition: all 0.3s ease;
+  margin-bottom: 12px;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.bottom-sheet-handle:hover .handle-bar {
+  background: linear-gradient(90deg, #cbd5e1 0%, #94a3b8 50%, #cbd5e1 100%);
+  transform: scaleX(1.15);
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.15);
+}
+
+.bottom-sheet.dragging .handle-bar {
+  background: linear-gradient(90deg, #3b82f6 0%, #1d4ed8 50%, #3b82f6 100%);
+  transform: scaleX(1.3);
+  box-shadow: 
+    inset 0 1px 3px rgba(0, 0, 0, 0.2),
+    0 0 8px rgba(59, 130, 246, 0.3);
+}
+
+/* Closed State Indicator */
+.closed-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 20px;
+  background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+  border-radius: 24px;
+  border: 1px solid rgba(203, 213, 225, 0.8);
+  transition: all 0.3s ease;
+  box-shadow: 
+    0 2px 8px rgba(0, 0, 0, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+.closed-indicator:hover {
+  background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%);
+  transform: scale(1.05);
+  box-shadow: 
+    0 4px 12px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+.closed-indicator span {
+  font-size: 13px;
+  font-weight: 600;
+  color: #475569;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  background: linear-gradient(135deg, #475569 0%, #64748b 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Manual Control Buttons */
+.manual-controls {
+  display: flex;
+  gap: 12px;
+  margin-top: 12px;
+  justify-content: center;
+  align-items: center;
+}
+
+.control-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 2px solid #e2e8f0;
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  color: #64748b;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 
+    0 2px 8px rgba(0, 0, 0, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+.control-btn:hover:not(:disabled) {
+  border-color: #3b82f6;
+  color: #3b82f6;
+  transform: scale(1.1) translateY(-2px);
+  box-shadow: 
+    0 6px 20px rgba(59, 130, 246, 0.25),
+    0 2px 8px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+.control-btn:active:not(:disabled) {
+  transform: scale(0.95) translateY(0);
+  box-shadow: 
+    0 2px 8px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+.control-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.control-btn:disabled:hover {
+  transform: none;
+  box-shadow: 
+    0 2px 8px rgba(0, 0, 0, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+/* Ripple effect for control buttons */
+.control-btn::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(59, 130, 246, 0.3) 0%, transparent 70%);
+  transform: translate(-50%, -50%);
+  transition: width 0.4s ease, height 0.4s ease;
+}
+
+.control-btn:active::before {
+  width: 120px;
+  height: 120px;
+}
+
+/* Specific control button styles */
+.minimize-btn {
+  border-color: #fecaca;
+  color: #dc2626;
+  background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+}
+
+.minimize-btn:hover:not(:disabled) {
+  border-color: #dc2626;
+  color: #dc2626;
+  background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+  box-shadow: 
+    0 6px 20px rgba(220, 38, 38, 0.25),
+    0 2px 8px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+.toggle-btn {
+  border-color: #bbf7d0;
+  color: #16a34a;
+  background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+}
+
+.toggle-btn:hover:not(:disabled) {
+  border-color: #16a34a;
+  color: #16a34a;
+  background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+  box-shadow: 
+    0 6px 20px rgba(22, 163, 74, 0.25),
+    0 2px 8px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+.maximize-btn {
+  border-color: #bfdbfe;
+  color: #2563eb;
+  background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+}
+
+.maximize-btn:hover:not(:disabled) {
+  border-color: #2563eb;
+  color: #2563eb;
+  background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+  box-shadow: 
+    0 6px 20px rgba(37, 99, 235, 0.25),
+    0 2px 8px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+/* Snap Points Indicator */
+.snap-points-indicator {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  padding: 20px;
+  background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+  border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+  transition: opacity 0.3s ease;
+  position: relative;
+}
+
+.snap-points-indicator::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, rgba(226, 232, 240, 1) 50%, transparent 100%);
+}
+
+.snap-point-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  border: 2px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 16px 20px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 80px;
+  min-height: 70px;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 
+    0 2px 8px rgba(0, 0, 0, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+.snap-point-btn:hover:not(:disabled) {
+  border-color: #3b82f6;
+  color: #3b82f6;
+  transform: translateY(-3px);
+  box-shadow: 
+    0 8px 25px rgba(59, 130, 246, 0.2),
+    0 4px 12px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+.snap-point-btn.active {
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  border-color: #3b82f6;
+  color: white;
+  box-shadow: 
+    0 8px 25px rgba(59, 130, 246, 0.4),
+    0 4px 12px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+}
+
+.snap-point-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.snap-point-btn:disabled:hover {
+  transform: none;
+  box-shadow: 
+    0 2px 8px rgba(0, 0, 0, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+/* Ripple effect for snap point buttons */
+.snap-point-btn::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(59, 130, 246, 0.2) 0%, transparent 70%);
+  transform: translate(-50%, -50%);
+  transition: width 0.4s ease, height 0.4s ease;
+}
+
+.snap-point-btn:active::before {
+  width: 150px;
+  height: 150px;
+}
+
+.snap-icon {
+  font-size: 20px;
+  font-weight: bold;
+  line-height: 1;
+  transition: transform 0.3s ease;
+}
+
+.snap-point-btn:hover:not(:disabled) .snap-icon {
+  transform: scale(1.15);
+}
+
+.snap-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  font-weight: 700;
+}
+
+/* Content Area */
+.bottom-sheet-content {
+  padding: 24px;
+  overflow-y: auto;
+  max-height: calc(100% - 160px);
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 transparent;
+  transition: opacity 0.3s ease;
+  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+}
+
+.bottom-sheet-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.bottom-sheet-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.bottom-sheet-content::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #cbd5e1 0%, #94a3b8 100%);
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+}
+
+.bottom-sheet-content::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #94a3b8 0%, #64748b 100%);
+}
+
+/* Default Content */
+.default-content {
+  text-align: left;
+  color: #1e293b;
+}
+
+.default-content h3 {
+  margin-bottom: 20px;
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #0f172a;
+  background: linear-gradient(135deg, #0f172a 0%, #334155 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.default-content p {
+  margin-bottom: 16px;
+  line-height: 1.7;
+  color: #475569;
+  font-size: 1rem;
+}
+
+.content-demo {
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border-radius: 16px;
+  padding: 20px;
+  margin-top: 20px;
+  border-left: 4px solid #3b82f6;
+  box-shadow: 
+    0 4px 12px rgba(0, 0, 0, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+.content-demo p {
+  margin-bottom: 16px;
+  font-weight: 600;
+  color: #334155;
+}
+
+.content-demo ul {
+  margin: 0;
+  padding-left: 24px;
+}
+
+.content-demo li {
+  margin-bottom: 12px;
+  line-height: 1.6;
+  color: #475569;
+}
+
+.content-demo strong {
+  color: #334155;
+  font-weight: 700;
+}
+
+/* Enhanced Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+/* Spring animation keyframes for additional effects */
+@keyframes springBounce {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.02);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes springGlow {
+  0% {
+    box-shadow: 
+      0 -20px 60px rgba(0, 0, 0, 0.15),
+      0 -8px 32px rgba(0, 0, 0, 0.1),
+      inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  }
+  50% {
+    box-shadow: 
+      0 -20px 60px rgba(59, 130, 246, 0.2),
+      0 -8px 32px rgba(59, 130, 246, 0.15),
+      inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  }
+  100% {
+    box-shadow: 
+      0 -20px 60px rgba(0, 0, 0, 0.15),
+      0 -8px 32px rgba(0, 0, 0, 0.1),
+      inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  }
+}
+
+/* Velocity-based animation */
+@keyframes velocitySnap {
+  0% {
+    transform: translateY(0);
+  }
+  25% {
+    transform: translateY(-10px);
+  }
+  75% {
+    transform: translateY(5px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+/* Animation states */
+.bottom-sheet.animating {
+  animation: springGlow 0.6s ease-out;
+}
+
+.bottom-sheet.animating .bottom-sheet-handle {
+  animation: springBounce 0.6s ease-out;
+}
+
+/* Body states for dragging */
+body.bottom-sheet-dragging {
+  cursor: grabbing;
+  user-select: none;
+}
+
+body.bottom-sheet-open {
+  overflow: hidden;
+}
+
+/* ===== RESPONSIVE DESIGN ===== */
+
+/* Tablet Styles (768px - 1023px) */
+@media (max-width: 1023px) and (min-width: 768px) {
+  .bottom-sheet {
+    max-width: 90%;
+    border-radius: 20px 20px 0 0;
+  }
+  
+  .bottom-sheet.closed {
+    border-radius: 20px 20px 0 0;
+  }
+  
+  .bottom-sheet-handle {
+    min-height: 68px;
+    padding: 14px 0;
+  }
+  
+  .handle-bar {
+    width: 44px;
+    height: 4px;
+    margin-bottom: 10px;
+  }
+  
+  .manual-controls {
+    gap: 10px;
+    margin-top: 10px;
+  }
+  
+  .control-btn {
+    width: 34px;
+    height: 34px;
+    font-size: 15px;
+  }
+  
+  .snap-points-indicator {
+    padding: 18px;
+    gap: 10px;
+  }
+  
+  .snap-point-btn {
+    padding: 14px 18px;
+    font-size: 12px;
+    min-width: 75px;
+    min-height: 65px;
+  }
+  
+  .snap-icon {
+    font-size: 18px;
+  }
+  
+  .snap-label {
+    font-size: 10px;
+  }
+  
+  .bottom-sheet-content {
+    padding: 22px;
+  }
+  
+  .default-content h3 {
+    font-size: 1.5rem;
+  }
+  
+  .default-content p {
+    font-size: 0.95rem;
+  }
+}
+
+/* Mobile Styles (up to 767px) */
+@media (max-width: 767px) {
+  .bottom-sheet {
+    max-width: 100%;
+    border-radius: 16px 16px 0 0;
+    max-height: 98vh;
+  }
+  
+  .bottom-sheet.closed {
+    border-radius: 16px 16px 0 0;
+  }
+  
+  .bottom-sheet-handle {
+    min-height: 60px;
+    padding: 12px 0;
+  }
+  
+  .handle-bar {
+    width: 40px;
+    height: 4px;
+    margin-bottom: 8px;
+  }
+  
+  .closed-indicator {
+    padding: 8px 16px;
+    border-radius: 20px;
+  }
+  
+  .closed-indicator span {
+    font-size: 12px;
+    letter-spacing: 0.6px;
+  }
+  
+  /* Hide manual controls on mobile for cleaner UI */
+  .manual-controls {
+    display: none;
+  }
+  
+  /* Hide snap point buttons on mobile */
+  .snap-points-indicator {
+    display: none;
+  }
+  
+  .bottom-sheet-content {
+    padding: 20px;
+    max-height: calc(100% - 120px);
+  }
+  
+  .default-content h3 {
+    font-size: 1.4rem;
+    margin-bottom: 16px;
+  }
+  
+  .default-content p {
+    font-size: 0.95rem;
+    margin-bottom: 12px;
+  }
+  
+  .content-demo {
+    padding: 16px;
+    margin-top: 16px;
+  }
+  
+  .content-demo p {
+    margin-bottom: 12px;
+  }
+  
+  .content-demo ul {
+    padding-left: 20px;
+  }
+  
+  .content-demo li {
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+  }
+}
+
+/* Small Mobile Styles (up to 480px) */
+@media (max-width: 480px) {
+  .bottom-sheet {
+    border-radius: 12px 12px 0 0;
+  }
+  
+  .bottom-sheet.closed {
+    border-radius: 12px 12px 0 0;
+  }
+  
+  .bottom-sheet-handle {
+    min-height: 56px;
+    padding: 10px 0;
+  }
+  
+  .handle-bar {
+    width: 36px;
+    height: 3px;
+    margin-bottom: 6px;
+  }
+  
+  .closed-indicator {
+    padding: 6px 12px;
+    border-radius: 16px;
+  }
+  
+  .closed-indicator span {
+    font-size: 11px;
+    letter-spacing: 0.5px;
+  }
+  
+  .bottom-sheet-content {
+    padding: 16px;
+  }
+  
+  .default-content h3 {
+    font-size: 1.3rem;
+    margin-bottom: 14px;
+  }
+  
+  .default-content p {
+    font-size: 0.9rem;
+    margin-bottom: 10px;
+  }
+  
+  .content-demo {
+    padding: 14px;
+    margin-top: 14px;
+  }
+  
+  .content-demo p {
+    margin-bottom: 10px;
+    font-size: 0.9rem;
+  }
+  
+  .content-demo ul {
+    padding-left: 18px;
+  }
+  
+  .content-demo li {
+    margin-bottom: 6px;
+    font-size: 0.85rem;
+  }
+}
+
+/* Landscape Mobile Styles */
+@media (max-width: 767px) and (orientation: landscape) {
+  .bottom-sheet {
+    max-height: 85vh;
+  }
+  
+  .bottom-sheet.fully-open {
+    max-height: 90vh;
+  }
+  
+  .bottom-sheet-handle {
+    min-height: 50px;
+    padding: 8px 0;
+  }
+  
+  .handle-bar {
+    width: 32px;
+    height: 3px;
+    margin-bottom: 6px;
+  }
+  
+  .bottom-sheet-content {
+    padding: 16px;
+    max-height: calc(100% - 100px);
+  }
+}
+
+/* High DPI Displays */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .handle-bar {
+    box-shadow: inset 0 0.5px 1px rgba(0, 0, 0, 0.1);
+  }
+  
+  .bottom-sheet-handle:hover .handle-bar {
+    box-shadow: inset 0 0.5px 1.5px rgba(0, 0, 0, 0.15);
+  }
+  
+  .bottom-sheet.dragging .handle-bar {
+    box-shadow: 
+      inset 0 0.5px 1.5px rgba(0, 0, 0, 0.2),
+      0 0 4px rgba(59, 130, 246, 0.3);
+  }
+}
+
+/* Touch Device Optimizations */
+@media (hover: none) and (pointer: coarse) {
+  .control-btn:hover:not(:disabled) {
+    transform: none;
+  }
+  
+  .snap-point-btn:hover:not(:disabled) {
+    transform: none;
+  }
+  
+  .feature-card:hover {
+    transform: none;
+  }
+  
+  .method-item:hover {
+    transform: none;
+  }
+  
+  .velocity-item:hover {
+    transform: none;
+  }
+  
+  .config-item:hover {
+    transform: none;
+  }
+  
+  /* Increase touch targets */
+  .control-btn {
+    min-width: 44px;
+    min-height: 44px;
+  }
+  
+  .snap-point-btn {
+    min-width: 88px;
+    min-height: 88px;
+  }
+  
+  .closed-indicator {
+    min-height: 44px;
+    padding: 12px 20px;
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .bottom-sheet {
+    background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+    color: #ffffff;
+    box-shadow: 
+      0 -20px 60px rgba(0, 0, 0, 0.4),
+      0 -8px 32px rgba(0, 0, 0, 0.3),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  }
+  
+  .bottom-sheet.dragging {
+    box-shadow: 
+      0 -25px 80px rgba(0, 0, 0, 0.5),
+      0 -12px 40px rgba(0, 0, 0, 0.4),
+      inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  }
+  
+  .bottom-sheet.animating {
+    box-shadow: 
+      0 -20px 60px rgba(59, 130, 246, 0.2),
+      0 -8px 32px rgba(59, 130, 246, 0.15),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  }
+  
+  .bottom-sheet-handle {
+    background: linear-gradient(180deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 1) 100%);
+    border-bottom-color: rgba(51, 65, 85, 0.8);
+  }
+  
+  .bottom-sheet-handle:active {
+    background: linear-gradient(180deg, rgba(15, 23, 42, 0.95) 0%, rgba(2, 6, 23, 1) 100%);
+  }
+  
+  .handle-bar {
+    background: linear-gradient(90deg, #475569 0%, #334155 50%, #475569 100%);
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.3);
+  }
+  
+  .bottom-sheet-handle:hover .handle-bar {
+    background: linear-gradient(90deg, #334155 0%, #1e293b 50%, #334155 100%);
+  }
+  
+  .bottom-sheet.dragging .handle-bar {
+    background: linear-gradient(90deg, #3b82f6 0%, #1d4ed8 50%, #3b82f6 100%);
+    box-shadow: 
+      inset 0 1px 3px rgba(0, 0, 0, 0.4),
+      0 0 8px rgba(59, 130, 246, 0.4);
+  }
+  
+  .closed-indicator {
+    background: linear-gradient(135deg, #334155 0%, #1e293b 100%);
+    border-color: rgba(51, 65, 85, 0.8);
+    box-shadow: 
+      0 2px 8px rgba(0, 0, 0, 0.2),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  }
+  
+  .closed-indicator:hover {
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+    box-shadow: 
+      0 4px 12px rgba(0, 0, 0, 0.3),
+      inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  }
+  
+  .closed-indicator span {
+    background: linear-gradient(135deg, #cbd5e1 0%, #94a3b8 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  
+  .manual-controls {
+    background: transparent;
+  }
+  
+  .control-btn {
+    background: linear-gradient(135deg, #334155 0%, #1e293b 100%);
+    border-color: #475569;
+    color: #cbd5e1;
+    box-shadow: 
+      0 2px 8px rgba(0, 0, 0, 0.2),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  }
+  
+  .control-btn:hover:not(:disabled) {
+    background: linear-gradient(135deg, #475569 0%, #334155 100%);
+  }
+  
+  .minimize-btn {
+    border-color: #dc2626;
+    color: #fca5a5;
+    background: linear-gradient(135deg, #450a0a 0%, #7f1d1d 100%);
+  }
+  
+  .minimize-btn:hover:not(:disabled) {
+    background: linear-gradient(135deg, #7f1d1d 0%, #991b1b 100%);
+  }
+  
+  .toggle-btn {
+    border-color: #16a34a;
+    color: #86efac;
+    background: linear-gradient(135deg, #052e16 0%, #14532d 100%);
+  }
+  
+  .toggle-btn:hover:not(:disabled) {
+    background: linear-gradient(135deg, #14532d 0%, #166534 100%);
+  }
+  
+  .maximize-btn {
+    border-color: #2563eb;
+    color: #93c5fd;
+    background: linear-gradient(135deg, #172554 0%, #1e3a8a 100%);
+  }
+  
+  .maximize-btn:hover:not(:disabled) {
+    background: linear-gradient(135deg, #1e3a8a 0%, #1d4ed8 100%);
+  }
+  
+  .snap-points-indicator {
+    background: linear-gradient(180deg, #334155 0%, #1e293b 100%);
+    border-bottom-color: rgba(51, 65, 85, 0.8);
+  }
+  
+  .snap-point-btn {
+    background: linear-gradient(135deg, #334155 0%, #1e293b 100%);
+    border-color: #475569;
+    color: #cbd5e1;
+    box-shadow: 
+      0 2px 8px rgba(0, 0, 0, 0.2),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  }
+  
+  .snap-point-btn:hover:not(:disabled) {
+    background: linear-gradient(135deg, #475569 0%, #334155 100%);
+  }
+  
+  .snap-point-btn.active {
+    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    border-color: #3b82f6;
+    color: white;
+    box-shadow: 
+      0 8px 25px rgba(59, 130, 246, 0.4),
+      0 4px 12px rgba(0, 0, 0, 0.3),
+      inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  }
+  
+  .bottom-sheet-content {
+    background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+  }
+  
+  .default-content h3 {
+    background: linear-gradient(135deg, #f8fafc 0%, #cbd5e1 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  
+  .default-content p {
+    color: #cbd5e1;
+  }
+  
+  .content-demo {
+    background: linear-gradient(135deg, #334155 0%, #1e293b 100%);
+    border-left-color: #3b82f6;
+    box-shadow: 
+      0 4px 12px rgba(0, 0, 0, 0.2),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  }
+  
+  .content-demo p {
+    color: #cbd5e1;
+  }
+  
+  .content-demo li {
+    color: #94a3b8;
+  }
+  
+  .content-demo strong {
+    color: #cbd5e1;
+  }
+} 
